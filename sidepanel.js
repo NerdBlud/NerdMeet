@@ -452,7 +452,7 @@
       head: [headers],
       body: tableRows,
       styles: { fontSize: 9 },
-      headStyles: { fillColor: [229, 165, 10], textColor: [31, 30, 29] }
+      headStyles: { fillColor: [244, 211, 94], textColor: [31, 30, 29] }
     });
 
     doc.save(`nerdmeet-${currentMeetCode || 'export'}-report.pdf`);

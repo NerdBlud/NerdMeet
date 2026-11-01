@@ -61,13 +61,18 @@ svg{width:100%;height:auto;display:block}
 @media (max-width:560px){.cards{grid-template-columns:1fr 1fr}.row{flex-direction:column}}
 @media (prefers-reduced-motion:reduce){*,::before,::after{animation:none!important;transition:none!important}}
 ::view-transition-group(*){animation-duration:.25s}
+
+:root{color-scheme:light;--bg:#f7f5ed;--fg:#292619;--muted:#756e59;--line:#e3dece;--card:#fffdf6;--accent:#806300;--accent-ink:#fffbee;--serif:"Segoe UI Variable","Segoe UI",system-ui,sans-serif}
+@media(prefers-color-scheme:dark){:root{color-scheme:dark;--bg:#151412;--fg:#f5f2e9;--muted:#a39f92;--line:#333027;--card:#1e1c17;--accent:#f4d35e;--accent-ink:#27210d}}
+main{max-width:920px;padding:40px 28px 80px}.mark{display:flex;align-items:center;gap:10px;font:650 21px var(--sans);letter-spacing:-.8px;color:var(--fg)}.mark::before{content:"";width:14px;height:14px;border:5px solid var(--accent);border-radius:8px 8px 8px 2px;transform:rotate(-8deg)}h1{font-weight:450;letter-spacing:-1.8px;margin-top:66px;font-size:clamp(32px,6vw,48px)}.sub{max-width:540px;font-size:14px;margin-bottom:30px}.btn,input[type=text],select{border-radius:8px;font-size:13px}.btn:hover{border-color:var(--accent)}.cards{gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:32px}.card{border:0;border-radius:0;padding:22px}.card b{font:450 34px var(--sans);letter-spacing:-1px;font-variant-numeric:tabular-nums}.panel{border-radius:10px;padding:22px}.chip span{border-radius:6px}th{font-size:11px}td{padding-top:13px;padding-bottom:13px}.track i{background:var(--accent)}.btn.primary{font-weight:600}.drop{border-radius:8px}body{ -webkit-font-smoothing:antialiased }
+@media(max-width:560px){main{padding:24px 16px 60px}.cards{grid-template-columns:1fr 1fr}h1{margin-top:44px}.card{padding:18px}}
 </style>
 </head>
 <body>
 <main>
 <span class="mark">NerdMeet</span>
-<h1>How did your meeting go?</h1>
-<p class="sub">View live participation, talk times, hand raises, and attendance for your Google Meet.</p>
+<h1>A little clarity.<br>A better meeting.</h1>
+<p class="sub">Participation, conversations, and time together — a clear view of your Google Meet.</p>
 
 <div class="row">
   <input id="code" type="text" placeholder="meet.google.com/abc-mnop-xyz" aria-label="Meet link or code" autocomplete="off">
@@ -557,7 +562,7 @@ function exportPDF() {
     head: [['Name', ...cols.map((c) => c.label)]],
     body: view.rows.map((r) => [getDisplayName(r.name), ...cols.map((c) => c.get(r))]),
     styles: { fontSize: 8 },
-    headStyles: { fillColor: [229, 165, 10], textColor: [31, 30, 29] }
+    headStyles: { fillColor: [244, 211, 94], textColor: [31, 30, 29] }
   });
   doc.save(`nerdmeet-${code || 'export'}.pdf`);
 }

@@ -1242,9 +1242,9 @@
         top: ${savedPos.top || '64px'};
         left: ${savedPos.left || '18px'};
         z-index: 999999;
-        font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-family: "Segoe UI Variable", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         font-size: 13px;
-        color: #FAF9F5;
+        color: #F5F2E9;
         user-select: none;
       `);
 
@@ -1253,7 +1253,7 @@
           display: flex;
           align-items: center;
           gap: 10px;
-          background: rgba(31, 30, 29, 0.94);
+          background: rgba(21, 20, 18, 0.96);
           backdrop-filter: blur(10px);
           border: 1px solid rgba(255, 255, 255, 0.14);
           border-radius: 999px;
@@ -1262,8 +1262,8 @@
           cursor: pointer;
           transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease;
         ">
-          <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#E5A50A;box-shadow:0 0 8px rgba(229,165,10,0.6);"></span>
-          <span style="font-weight:700;letter-spacing:0.3px;color:#E5A50A;">NerdMeet</span>
+          <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#F4D35E;box-shadow:0 0 8px transparent;"></span>
+          <span style="font-weight:700;letter-spacing:0.3px;color:#F4D35E;">NerdMeet</span>
           <span id="nm-pill-stats" style="display:inline-flex;align-items:center;gap:5px;opacity:0.92;">Tracking...</span>
           <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6;"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
@@ -1289,10 +1289,10 @@
             border-bottom: 1px solid rgba(255,255,255,0.08);
             cursor: grab;
           ">
-            <span style="font-weight:700;font-size:11px;letter-spacing:0.5px;color:#E5A50A;">LIVE ANALYTICS</span>
+            <span style="font-weight:700;font-size:11px;letter-spacing:0.5px;color:#F4D35E;">LIVE ANALYTICS</span>
             <div style="display:flex;gap:6px;align-items:center;">
               <button id="nm-close-btn" title="Minimize to pill" style="
-                background:none;border:none;color:#FAF9F5;cursor:pointer;opacity:0.7;padding:3px;display:flex;align-items:center;transition:opacity 0.15s ease;
+                background:none;border:none;color:#F5F2E9;cursor:pointer;opacity:0.7;padding:3px;display:flex;align-items:center;transition:opacity 0.15s ease;
               ">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
               </button>
@@ -1302,7 +1302,7 @@
           <div style="display:flex;background:#232220;border-bottom:1px solid rgba(255,255,255,0.08);">
             <button id="nm-tab-queue" style="
               flex:1;padding:9px;border:none;background:${hudTab === 'queue' ? '#1F1E1D' : 'transparent'};
-              color:${hudTab === 'queue' ? '#E5A50A' : '#A8A69E'};font-weight:600;cursor:pointer;font-size:11px;
+              color:${hudTab === 'queue' ? '#F4D35E' : '#A39F92'};font-weight:600;cursor:pointer;font-size:11px;
               display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
             ">
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>
@@ -1310,7 +1310,7 @@
             </button>
             <button id="nm-tab-speakers" style="
               flex:1;padding:9px;border:none;background:${hudTab === 'speakers' ? '#1F1E1D' : 'transparent'};
-              color:${hudTab === 'speakers' ? '#E5A50A' : '#A8A69E'};font-weight:600;cursor:pointer;font-size:11px;
+              color:${hudTab === 'speakers' ? '#F4D35E' : '#A39F92'};font-weight:600;cursor:pointer;font-size:11px;
               display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
             ">
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
@@ -1322,17 +1322,17 @@
           </div>
 
           <div style="
-            display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:10px;background:#262523;border-top:1px solid rgba(255,255,255,0.08);
+            display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:10px;background:#1E1C17;border-top:1px solid rgba(255,255,255,0.08);
           ">
             <button id="nm-btn-sidepanel" style="
-              background:#E5A50A;color:#1F1E1D;border:none;border-radius:8px;padding:7px;font-size:11px;font-weight:600;cursor:pointer;
+              background:#F4D35E;color:#1F1E1D;border:none;border-radius:8px;padding:7px;font-size:11px;font-weight:600;cursor:pointer;
               display:inline-flex;align-items:center;justify-content:center;gap:5px;transition:opacity 0.15s ease;
             ">
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
               Side Panel
             </button>
             <button id="nm-btn-csv" style="
-              background:#33312E;color:#FAF9F5;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:7px;font-size:11px;font-weight:500;cursor:pointer;
+              background:#33312E;color:#F5F2E9;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:7px;font-size:11px;font-weight:500;cursor:pointer;
               display:inline-flex;align-items:center;justify-content:center;gap:5px;transition:opacity 0.15s ease;
             ">
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>
@@ -1341,7 +1341,7 @@
           </div>
           <div style="padding:4px 10px 8px;display:flex;justify-content:space-between;font-size:10px;opacity:0.65;">
             <span id="nm-active-count">0 in call</span>
-            <a id="nm-export-json-link" href="#" style="color:#E5A50A;text-decoration:none;display:inline-flex;align-items:center;gap:3px;">
+            <a id="nm-export-json-link" href="#" style="color:#F4D35E;text-decoration:none;display:inline-flex;align-items:center;gap:3px;">
               <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
               JSON
             </a>
@@ -1373,18 +1373,18 @@
       tabQueue.onclick = () => {
         hudTab = 'queue';
         tabQueue.style.background = '#1F1E1D';
-        tabQueue.style.color = '#E5A50A';
+        tabQueue.style.color = '#F4D35E';
         tabSpeakers.style.background = 'transparent';
-        tabSpeakers.style.color = '#A8A69E';
+        tabSpeakers.style.color = '#A39F92';
         updateHudUI();
       };
 
       tabSpeakers.onclick = () => {
         hudTab = 'speakers';
         tabSpeakers.style.background = '#1F1E1D';
-        tabSpeakers.style.color = '#E5A50A';
+        tabSpeakers.style.color = '#F4D35E';
         tabQueue.style.background = 'transparent';
-        tabQueue.style.color = '#A8A69E';
+        tabQueue.style.color = '#A39F92';
         updateHudUI();
       };
 
@@ -1495,8 +1495,8 @@
           `;
         } else if (currentSpeaker) {
           pillStats.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#E5A50A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
-            <b style="color:#FAF9F5;">${currentSpeaker[0]}</b> · ${onlineParts.length} online
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F4D35E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+            <b style="color:#F5F2E9;">${currentSpeaker[0]}</b> · ${onlineParts.length} online
           `;
         } else {
           pillStats.innerHTML = `${onlineParts.length} online · ${allParts.length} total`;
@@ -1521,7 +1521,7 @@
         if (raisedHands.length === 0) {
           if (!body.querySelector('.nm-empty-msg')) {
             body.innerHTML = `
-              <div class="nm-empty-msg" style="text-align:center;padding:24px 8px;color:#A8A69E;font-size:12px;">
+              <div class="nm-empty-msg" style="text-align:center;padding:24px 8px;color:#A39F92;font-size:12px;">
                 No raised hands right now.<br>
                 <span style="opacity:0.6;font-size:11px;">Hands appear here in real-time (FIFO).</span>
               </div>
@@ -1548,11 +1548,11 @@
               item = document.createElement('div');
               item.className = 'nm-queue-item';
               item.setAttribute('data-name', name);
-              item.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:8px 10px;margin-bottom:6px;background:#282725;border-radius:8px;border-left:3px solid #E5A50A;transition:transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);';
+              item.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:8px 10px;margin-bottom:6px;background:#282725;border-radius:8px;border-left:3px solid #F4D35E;transition:transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);';
               item.innerHTML = `
                 <div style="display:flex;gap:7px;align-items:center;min-width:0;">
-                  <span class="nm-queue-order" style="font-weight:700;color:#E5A50A;font-size:11px;">#${idx + 1}</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#E5A50A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>
+                  <span class="nm-queue-order" style="font-weight:700;color:#F4D35E;font-size:11px;">#${idx + 1}</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F4D35E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>
                   <span class="nm-queue-name" style="font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;">${name}</span>
                 </div>
                 <span class="nm-queue-wait" style="font-size:11px;color:#E8846C;font-weight:600;">${waitStr}</span>
@@ -1578,27 +1578,27 @@
         const maxTalk = Math.max(1, topSpeakers[0]?.[1].talkTimeMs || 1);
 
         if (topSpeakers.length === 0 || topSpeakers[0][1].talkTimeMs === 0) {
-          body.innerHTML = `<div style="text-align:center;padding:20px;color:#A8A69E;font-size:12px;">No talk-time recorded yet.</div>`;
+          body.innerHTML = `<div style="text-align:center;padding:20px;color:#A39F92;font-size:12px;">No talk-time recorded yet.</div>`;
         } else {
           body.innerHTML = topSpeakers.map(([name, p]) => {
             const pct = Math.min(100, Math.round((p.talkTimeMs / maxTalk) * 100));
             const isSpeakingNow = p.isUnmuted;
             const micIcon = isSpeakingNow
-              ? `<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#E5A50A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:2px;"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>`
+              ? `<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#F4D35E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:2px;"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>`
               : '';
 
             return `
               <div style="margin-bottom:8px;">
                 <div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:11px;">
-                  <span style="font-weight:${isSpeakingNow ? '700' : '500'};color:${isSpeakingNow ? '#E5A50A' : '#FAF9F5'};">
+                  <span style="font-weight:${isSpeakingNow ? '700' : '500'};color:${isSpeakingNow ? '#F4D35E' : '#F5F2E9'};">
                     ${micIcon}${name}
                   </span>
-                  <span style="color:#A8A69E;font-size:10px;">
+                  <span style="color:#A39F92;font-size:10px;">
                     Talk: <b>${formatDur(p.talkTimeMs)}</b> (${p.micOpens || 0}×) · Cam: <b>${formatDur(p.cameraTimeMs)}</b> (${p.cameraOpens || 0}×)
                   </span>
                 </div>
-                <div style="width:100%;height:4px;background:#3A3936;border-radius:2px;overflow:hidden;">
-                  <div style="width:${pct}%;height:100%;background:#E5A50A;border-radius:2px;transition:width 0.4s cubic-bezier(0.16, 1, 0.3, 1);"></div>
+                <div style="width:100%;height:4px;background:#333027;border-radius:2px;overflow:hidden;">
+                  <div style="width:${pct}%;height:100%;background:#F4D35E;border-radius:2px;transition:width 0.4s cubic-bezier(0.16, 1, 0.3, 1);"></div>
                 </div>
               </div>
             `;
