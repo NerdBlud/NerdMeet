@@ -126,6 +126,7 @@ main{max-width:920px;padding:40px 28px 80px}.mark{display:flex;align-items:cente
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="lib/jspdf.umd.min.js"></script>
 <script src="lib/jspdf.plugin.autotable.min.js"></script>
+<script src="pdf-report.js"></script>
 <script>
 if (!window.jspdf) {
   const s1 = document.createElement('script');
@@ -542,27 +543,19 @@ function render() {
 
 function exportPDF() {
   const on = new Set([...document.querySelectorAll('#chips input:checked')].map((i) => i.value));
-  const doc = new window.jspdf.jsPDF(); 
-  doc.setFontSize(20); doc.text('NerdMeet Analytics Report', 14, 20);
-  doc.setFontSize(10); doc.setTextColor(110);
-  doc.text(`Meeting: ${code} | Date: ${new Date(view.rec.startTime).toLocaleDateString()}`, 14, 27);
-  let y = 36;
-  if (on.has('summary')) {
-    doc.setTextColor(30);
-    const totalTalk = view.hasBeh ? rows => rows.reduce((a, r) => a + (r.beh?.talkTimeMs || 0), 0) : () => 0;
-    [`Total Participants: ${view.rows.length}`, `Average Stay: ${dur(view.avg)}`, `Peak Concurrent: ${view.peak}`,
-     `Total Talk Time: ${dur(totalTalk(view.rows))}`,
-     `Hand Raises: ${view.hasBeh ? view.rows.reduce((a, r) => a + (r.beh?.handRaises || 0), 0) : '-'}`]
-      .forEach((t) => { doc.text(t, 14, y); y += 6; });
-    y += 4;
-  }
   const cols = COLS.filter((c) => on.has(c.id));
-  doc.autoTable({
-    startY: y,
-    head: [['Name', ...cols.map((c) => c.label)]],
-    body: view.rows.map((r) => [getDisplayName(r.name), ...cols.map((c) => c.get(r))]),
-    styles: { fontSize: 8 },
-    headStyles: { fillColor: [244, 211, 94], textColor: [31, 30, 29] }
+  const doc = window.NerdMeetPDF.create({
+    meetingCode: code,
+    startedAt: view.rec.startTime,
+    headers: ['Participant', ...cols.map((c) => c.label)],
+    rows: view.rows.map((r) => [getDisplayName(r.name), ...cols.map((c) => c.get(r))]),
+    anonymized: anonymize,
+    metrics: on.has('summary') ? [
+      { label: 'Participants', value: view.rows.length },
+      { label: 'Average stay', value: dur(view.avg) },
+      { label: 'Peak attendance', value: view.peak },
+      { label: 'Mic-on time', value: view.hasBeh ? dur(view.rows.reduce((sum, r) => sum + (r.beh?.talkTimeMs || 0), 0)) : '-' }
+    ] : []
   });
   doc.save(`nerdmeet-${code || 'export'}.pdf`);
 }

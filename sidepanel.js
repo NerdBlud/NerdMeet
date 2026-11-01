@@ -406,23 +406,8 @@
     const incRejoins = $('#colRejoins')?.checked;
     const incKpiHeader = $('#incKpiHeader')?.checked;
 
-    const doc = new window.jspdf.jsPDF();
-    doc.setFontSize(20);
-    doc.text('NerdMeet Analytics Report', 14, 20);
-
-    doc.setFontSize(10);
-    doc.setTextColor(110);
-    doc.text(`Meeting: ${currentMeetCode || 'Unknown'} | Date: ${new Date(currentData.startedAt || Date.now()).toLocaleDateString()}`, 14, 28);
-
     const parts = Object.entries(currentData.participants);
     const totalTalk = parts.reduce((a, [, p]) => a + (p.talkTimeMs || 0), 0);
-
-    let startY = 34;
-    if (incKpiHeader) {
-      doc.setTextColor(30);
-      doc.text(`Total Attendees: ${parts.length}    Total Talk Time: ${dur(totalTalk)}    Hand Raises: ${parts.reduce((a, [, p]) => a + (p.handRaises || 0), 0)}`, 14, 36);
-      startY = 42;
-    }
 
     const headers = ['Participant'];
     if (incStay) headers.push('Stay Duration');
@@ -447,12 +432,18 @@
       return row;
     });
 
-    doc.autoTable({
-      startY,
-      head: [headers],
-      body: tableRows,
-      styles: { fontSize: 9 },
-      headStyles: { fillColor: [244, 211, 94], textColor: [31, 30, 29] }
+    const doc = window.NerdMeetPDF.create({
+      meetingCode: currentMeetCode,
+      startedAt: currentData.startedAt || Date.now(),
+      headers,
+      rows: tableRows,
+      anonymized: anonymize,
+      metrics: incKpiHeader ? [
+        { label: 'Participants', value: parts.length },
+        { label: 'Mic-on time', value: dur(totalTalk) },
+        { label: 'Hand raises', value: parts.reduce((sum, [, p]) => sum + (p.handRaises || 0), 0) },
+        { label: 'Messages', value: parts.reduce((sum, [, p]) => sum + (p.chatMessages || 0), 0) }
+      ] : []
     });
 
     doc.save(`nerdmeet-${currentMeetCode || 'export'}-report.pdf`);
