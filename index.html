@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NerdMeet - Analytics & Attendance</title>
+<style>
+:root{--bg:#FAF9F5;--fg:#1F1E1D;--muted:#6F6D66;--line:#E6E3DA;--card:#FFFFFF;--accent:#E5A50A;--accent-ink:#1F1E1D;--err:#B3402A;
+  --serif:ui-serif,Georgia,"Times New Roman",serif;--sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--ease:cubic-bezier(.2,.8,.2,1)}
+@media (prefers-color-scheme:dark){:root{--bg:#1F1E1D;--fg:#FAF9F5;--muted:#A8A69E;--line:#3A3936;--card:#262523;--accent:#F59E0B;--err:#E8846C}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 var(--sans)}
+main{max-width:760px;margin:0 auto;padding:32px 20px 80px}
+.mark{font:600 18px var(--serif);color:var(--accent)}
+h1{font:500 clamp(28px,6vw,40px)/1.15 var(--serif);margin:40px 0 8px;letter-spacing:-.01em}
+.sub,.hint{color:var(--muted);margin:0 0 20px}
+.hint{font-size:13px;margin:12px 0 0}
+.row{display:flex;gap:8px}
+input[type=text],select{flex:1;min-width:0;font:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;transition:border-color .2s var(--ease)}
+select{flex:none;max-width:100%;margin-bottom:14px}
+.btn{font:inherit;font-weight:500;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:12px;padding:12px 18px;cursor:pointer;transition:transform .2s var(--ease),opacity .2s}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.danger{color:var(--err);border-color:rgba(232,132,108,.3)}
+.btn.danger:hover{background:rgba(232,132,108,.12);border-color:var(--err)}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.5;cursor:default}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#msg{min-height:22px;margin:12px 0 0;font-size:14px}
+#msg.err{color:var(--err)}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:24px 0 20px}
+.card,.sk{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.card b{display:block;font:500 26px/1.2 var(--serif)}
+.card span{color:var(--muted);font-size:13px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:20px}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;white-space:nowrap}
+th{text-align:left;font-weight:500;color:var(--muted)}
+th,td{padding:8px 10px 8px 0;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+.track{display:inline-block;vertical-align:middle;width:56px;height:4px;margin-left:6px;border-radius:2px;background:var(--line);overflow:hidden}
+.track i{display:block;height:100%;background:var(--accent);transform-origin:left;transform:scaleX(var(--w))}
+svg{width:100%;height:auto;display:block}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0}
+.drop{border:1px dashed var(--line);border-radius:12px;padding:10px 14px;color:var(--muted);font-size:13px;cursor:pointer;transition:border-color .2s var(--ease)}
+.drop.over{border-color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.chip span{display:block;padding:5px 12px;border:1px solid var(--line);border-radius:999px;font-size:13px;color:var(--muted);transition:background .2s var(--ease),color .2s var(--ease)}
+.chip input:checked+span{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.chip input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.in{animation:in .5s var(--ease) both;animation-delay:calc(var(--i,0)*60ms)}
+@keyframes in{from{opacity:0;transform:translateY(12px)}}
+.track i{animation:grow .8s var(--ease) both}
+@keyframes grow{from{transform:scaleX(0)}}
+.sk{height:78px;position:relative;overflow:hidden}
+.sk::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,var(--line),transparent);animation:sh 1.2s infinite}
+@keyframes sh{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.toggle-bar{display:flex;align-items:center;justify-content:space-between;margin:12px 0;font-size:13px}
+.actions-row{display:flex;gap:8px;margin-top:16px}
+@media (max-width:560px){.cards{grid-template-columns:1fr 1fr}.row{flex-direction:column}}
+@media (prefers-reduced-motion:reduce){*,::before,::after{animation:none!important;transition:none!important}}
+::view-transition-group(*){animation-duration:.25s}
+</style>
+</head>
+<body>
+<main>
+<span class="mark">NerdMeet</span>
+<h1>How did your meeting go?</h1>
+<p class="sub">View live participation, talk times, hand raises, and attendance for your Google Meet.</p>
+
+<div class="row">
+  <input id="code" type="text" placeholder="meet.google.com/abc-mnop-xyz" aria-label="Meet link or code" autocomplete="off">
+  <button id="go" class="btn primary">Analyze</button>
+  <button id="btnLoadLocal" class="btn" title="Load tracker data stored in browser">Stored Meetings</button>
+</div>
+<div class="row" id="storedRow" style="margin-top:10px;display:none;">
+  <select id="storedSelect" aria-label="Select stored meeting" style="margin-bottom:0;flex:1;"></select>
+  <button id="btnOpenStored" class="btn primary" title="Open selected meeting">Open</button>
+  <button id="btnDeleteStored" class="btn danger" title="Delete selected stored meeting">
+    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;display:inline-block;vertical-align:middle;"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+  </button>
+</div>
+<p id="msg" role="status"></p>
+<div id="skel" class="cards" hidden><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
+
+<section id="out" hidden>
+  <div class="row" id="recRow" style="margin-bottom:14px;display:none;">
+    <select id="rec" aria-label="Meeting session" style="margin-bottom:0;flex:1;"></select>
+    <button id="btnDeleteRec" class="btn danger" title="Delete this meeting from stored data">
+      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;display:inline-block;vertical-align:middle;"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+    </button>
+  </div>
+  <div id="cards" class="cards"></div>
+  <div class="panel in" style="--i:5"><div id="tl"></div></div>
+  
+  <div class="toggle-bar in" style="--i:5.5">
+    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+      <input type="checkbox" id="chkAnonymize">
+      <span>Privacy Mode (anonymize names for sharing)</span>
+    </label>
+  </div>
+
+  <div class="panel in" style="--i:6">
+    <div class="scroll"><table id="tbl"></table></div>
+    <p id="behHint" class="hint">Enhanced metrics (talk time, camera duration, hands queue) are captured by the NerdMeet extension/userscript.</p>
+  </div>
+  
+  <div class="tools in" style="--i:7">
+    <label class="drop" id="drop" tabindex="0">Import tracker data (click or drop JSON)<input id="file" type="file" accept="application/json,.json" hidden></label>
+  </div>
+  
+  <div class="chips in" id="chips" style="--i:8" aria-label="Include in PDF"></div>
+  <div class="actions-row in" style="--i:9">
+    <button id="pdf" class="btn primary">Export PDF</button>
+    <button id="csv" class="btn">Export CSV</button>
+  </div>
+</section>
+</main>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="lib/jspdf.umd.min.js"></script>
+<script src="lib/jspdf.plugin.autotable.min.js"></script>
+<script>
+if (!window.jspdf) {
+  const s1 = document.createElement('script');
+  s1.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+  document.head.appendChild(s1);
+  const s2 = document.createElement('script');
+  s2.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js';
+  document.head.appendChild(s2);
+}
+
+const CLIENT_ID = 'YOUR_CLIENT_ID.apps.googleusercontent.com';
+const SCOPE = 'https://www.googleapis.com/auth/meetings.space.readonly';
+
+const $ = (s) => document.querySelector(s);
+const reduced = matchMedia('(prefers-reduced-motion:reduce)').matches;
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const swap = (fn) => (document.startViewTransition && !reduced ? document.startViewTransition(fn) : fn());
+const clock = (t) => t ? new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-';
+const dur = (ms) => {
+  if (!ms || isNaN(ms)) return '0s';
+  const s = Math.round(ms / 1000), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60);
+  return h ? `${h}h ${String(m).padStart(2, '0')}m` : m ? `${m}m ${String(s % 60).padStart(2, '0')}s` : `${s}s`;
+};
+
+let token = null, tokenClient, pending, code = '', view = null, imported = null;
+let anonymize = false;
+const anonMap = new Map();
+
+function getDisplayName(realName) {
+  if (!anonymize) return realName;
+  if (!anonMap.has(realName)) {
+    anonMap.set(realName, `Participant ${anonMap.size + 1}`);
+  }
+  return anonMap.get(realName);
+}
+
+function getToken() {
+  return new Promise((res, rej) => {
+    if (token) return res(token);
+    if (!window.google?.accounts) return rej(new Error('Google sign-in did not load. Check your connection or load tracker data directly.'));
+    pending = { res, rej };
+    tokenClient ||= google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID, scope: SCOPE,
+      callback: (r) => (r.error ? pending.rej(new Error('Sign-in was not completed.')) : pending.res((token = r.access_token))),
+      error_callback: () => pending.rej(new Error('Sign-in was cancelled.')),
+    });
+    tokenClient.requestAccessToken();
+  });
+}
+
+async function api(path, params = {}) {
+  const r = await fetch(`https://meet.googleapis.com/v2/${path}?${new URLSearchParams(params)}`, { headers: { Authorization: `Bearer ${await getToken()}` } });
+  if (r.status === 401) { token = null; throw new Error('Your session expired. Click Analyze to sign in again.'); }
+  if (r.status === 403) throw new Error('Google denied access. Only the meeting organizer can read these records.');
+  if (r.status === 404) throw new Error('No meeting found for that code. Check the link and try again.');
+  if (!r.ok) throw new Error(`Google returned an error (${r.status}). Try again in a moment.`);
+  return r.json();
+}
+
+async function all(path, key, params = {}) {
+  const out = []; let tok;
+  do {
+    const d = await api(path, { ...params, pageSize: 100, ...(tok && { pageToken: tok }) });
+    out.push(...(d[key] || [])); tok = d.nextPageToken;
+  } while (tok);
+  return out;
+}
+
+function isGarbageOrIcon(s) {
+  if (!s) return true;
+  const str = s.trim();
+  if (str.length < 2) return true;
+  const l = str.toLowerCase();
+  if (l.includes('_')) return true;
+  const blacklist = new Set([
+    'you', 'pin', 'unpin', 'mute', 'unmute', 'more options', 'turn off', 'turn on',
+    'person', 'people', 'groups', 'mic', 'videocam', 'camera', 'video', 'hand',
+    'back_hand', 'pan_tool', 'settings', 'chat', 'info', 'activities', 'fullscreen',
+    'call', 'presentation', 'presenting', 'more_vert', 'more_horiz', 'circle',
+    'check', 'close', 'arrow_back', 'arrow_forward', 'keyboard', 'audio', 'speaker',
+    'raised hand', 'participant', 'send a message', 'in-call messages', 'messages'
+  ]);
+  if (blacklist.has(l)) return true;
+  if (/^\d{1,2}([:.]\d{2})?\s*(am|pm)?$/i.test(l)) return true;
+  return false;
+}
+
+function loadFromTrackerData(data) {
+  imported = data;
+  const parts = Object.entries(data.participants || {}).filter(([n]) => !isGarbageOrIcon(n));
+  const t0 = data.startedAt ? +new Date(data.startedAt) : Date.now();
+  const t1 = data.lastUpdated ? +new Date(data.lastUpdated) : Date.now();
+
+  const rows = parts.map(([name, p]) => {
+    const first = p.firstSeen ? +new Date(p.firstSeen) : t0;
+    const last = p.lastSeen ? +new Date(p.lastSeen) : t1;
+    const total = p.totalStayMs || Math.max(1000, last - first);
+    return {
+      name,
+      first,
+      last,
+      total,
+      rejoins: p.rejoins || 0,
+      beh: p,
+      ss: [[first, last]]
+    };
+  });
+
+  const ev = rows.flatMap((r) => r.ss.flatMap(([a, b]) => [[a, 1], [b, -1]])).sort((x, y) => x[0] - y[0] || x[1] - y[1]);
+  let cur = 0, peak = 0; const pts = [];
+  ev.forEach(([t, d]) => { cur += d; peak = Math.max(peak, cur); pts.push([t, cur]); });
+
+  view = {
+    rec: { startTime: data.startedAt || new Date().toISOString() },
+    rows,
+    peak: Math.max(peak, rows.length),
+    pts: pts.length ? pts : [[t0, rows.length], [t1, rows.length]],
+    avg: rows.length ? rows.reduce((a, r) => a + r.total, 0) / rows.length : 0,
+    t0: ev.length ? ev[0][0] : t0,
+    t1: ev.length ? ev[ev.length - 1][0] : t1,
+    hasBeh: true
+  };
+
+  const recRow = $('#recRow');
+  if (recRow) {
+    const sel = $('#rec');
+    const c = data.meetCode || code || 'meeting';
+    sel.innerHTML = `<option value="${c}">${c} (${parts.length} participant${parts.length === 1 ? '' : 's'})</option>`;
+    recRow.style.display = 'flex';
+  }
+
+  swap(render);
+}
+
+async function loadRecord(rec) {
+  const end = rec.endTime ? +new Date(rec.endTime) : Date.now();
+  const parts = await all(`${rec.name}/participants`, 'participants');
+  const rows = await Promise.all(parts.map(async (p) => {
+    const ss = (await all(`${p.name}/participantSessions`, 'participantSessions'))
+      .map((s) => [+new Date(s.startTime), s.endTime ? +new Date(s.endTime) : end]);
+    return {
+      name: (p.signedinUser || p.anonymousUser || p.phoneUser || {}).displayName || 'Unknown',
+      first: Math.min(...ss.map((s) => s[0])), last: Math.max(...ss.map((s) => s[1])),
+      total: ss.reduce((a, s) => a + s[1] - s[0], 0), rejoins: Math.max(0, ss.length - 1), ss,
+    };
+  }));
+  const ev = rows.flatMap((r) => r.ss.flatMap(([a, b]) => [[a, 1], [b, -1]])).sort((x, y) => x[0] - y[0] || x[1] - y[1]);
+  let cur = 0, peak = 0; const pts = [];
+  ev.forEach(([t, d]) => { cur += d; peak = Math.max(peak, cur); pts.push([t, cur]); });
+  view = { rec, rows, peak, pts, avg: rows.length ? rows.reduce((a, r) => a + r.total, 0) / rows.length : 0,
+           t0: ev.length ? ev[0][0] : 0, t1: ev.length ? ev[ev.length - 1][0] : 1 };
+  applyImport();
+}
+
+async function analyze() {
+  const m = $('#code').value.match(/[a-z]{3}-[a-z]{4}-[a-z]{3}/i);
+  if (!m) return say('That does not look like a Meet link or code (for example abc-mnop-xyz).', true);
+  code = m[0].toLowerCase();
+
+  const localData = await getStoredMeet(code);
+  if (localData && (!CLIENT_ID || CLIENT_ID.includes('YOUR_CLIENT_ID'))) {
+    say(`Loaded tracker data for ${code} from local storage.`);
+    loadFromTrackerData(localData);
+    return;
+  }
+
+  $('#go').disabled = true; say('');
+  swap(() => { $('#out').hidden = true; $('#skel').hidden = false; });
+  try {
+    const space = await api(`spaces/${code}`);
+    const recs = (await all('conferenceRecords', 'conferenceRecords', { filter: `space.name="${space.name}"` }))
+      .sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
+    if (!recs.length) throw new Error('No records yet. Google can take a few minutes after the meeting ends.');
+    const sel = $('#rec');
+    sel.innerHTML = recs.map((r, i) => `<option value="${i}">${new Date(r.startTime).toLocaleString()}</option>`).join('');
+    sel.hidden = recs.length < 2; sel.onchange = () => pick(recs[sel.value]);
+    if (localData) imported = localData;
+    await pick(recs[0]);
+  } catch (e) {
+    if (localData) {
+      loadFromTrackerData(localData);
+      say(`Loaded local tracker data (${e.message})`);
+    } else {
+      swap(() => { $('#skel').hidden = true; });
+      say(e.message, true);
+    }
+  } finally { $('#go').disabled = false; }
+}
+
+const ext = typeof browser !== 'undefined' ? browser : (typeof chrome !== 'undefined' ? chrome : null);
+
+async function getStoredMeet(c) {
+  if (ext?.storage?.local) {
+    try {
+      const res = await ext.storage.local.get(`nerdmeet_${c}`);
+      if (res[`nerdmeet_${c}`]) return res[`nerdmeet_${c}`];
+    } catch (e) {}
+  }
+  try {
+    const raw = localStorage.getItem(`nerdmeet:${c}`);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return null;
+}
+
+async function getAllStoredMeetings() {
+  const meets = {};
+  if (ext?.storage?.local) {
+    try {
+      const all = await ext.storage.local.get(null);
+      Object.keys(all).forEach((k) => {
+        if (k.startsWith('nerdmeet_') && k !== 'nerdmeet_latest_meet' && k !== 'nerdmeet_last_updated') {
+          const c = k.replace('nerdmeet_', '');
+          meets[c] = all[k];
+        }
+      });
+    } catch (e) {}
+  }
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith('nerdmeet:')) {
+        const c = k.replace('nerdmeet:', '');
+        if (!meets[c]) {
+          try { meets[c] = JSON.parse(localStorage.getItem(k)); } catch (e) {}
+        }
+      }
+    }
+  } catch (e) {}
+  return meets;
+}
+
+async function loadStoredMeetingsList() {
+  const meets = await getAllStoredMeetings();
+  const codes = Object.keys(meets);
+  const row = $('#storedRow');
+  const sel = $('#storedSelect');
+  if (codes.length === 0) {
+    row.style.display = 'none';
+    say('No stored meetings found in local browser storage.', true);
+    return;
+  }
+  sel.innerHTML = '<option value="">Select stored meeting...</option>' +
+    codes.map((c) => {
+      const item = meets[c];
+      const dateStr = item?.startedAt ? new Date(item.startedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+      const count = Object.keys(item?.participants || {}).length;
+      return `<option value="${c}">${c} (${count} participant${count === 1 ? '' : 's'}${dateStr ? ' · ' + dateStr : ''})</option>`;
+    }).join('') +
+    '<option value="__clear_all__">🗑 Delete all meetings...</option>';
+
+  row.style.display = 'flex';
+  if (code && codes.includes(code)) {
+    sel.value = code;
+  } else if (codes.length > 0) {
+    sel.value = codes[0];
+  }
+}
+
+async function deleteStoredMeeting(c) {
+  if (!c) return;
+  if (ext?.storage?.local) {
+    await ext.storage.local.remove(`nerdmeet_${c}`);
+    const all = await ext.storage.local.get(null);
+    if (all.nerdmeet_latest_meet === c) {
+      const remaining = Object.keys(all).filter((k) => k.startsWith('nerdmeet_') && k !== 'nerdmeet_latest_meet' && k !== 'nerdmeet_last_updated' && k !== `nerdmeet_${c}`);
+      if (remaining.length > 0) {
+        await ext.storage.local.set({ nerdmeet_latest_meet: remaining[0].replace('nerdmeet_', '') });
+      } else {
+        await ext.storage.local.remove('nerdmeet_latest_meet');
+      }
+    }
+  }
+  try {
+    localStorage.removeItem(`nerdmeet:${c}`);
+  } catch (e) {}
+
+  if (code === c) {
+    code = null;
+    imported = null;
+    view = null;
+    $('#out').hidden = true;
+    const recRow = $('#recRow');
+    if (recRow) recRow.style.display = 'none';
+    say(`Deleted meeting ${c}.`);
+  }
+  await loadStoredMeetingsList();
+}
+
+async function deleteAllStoredMeetings() {
+  if (ext?.storage?.local) {
+    const all = await ext.storage.local.get(null);
+    const keysToRemove = Object.keys(all).filter((k) => k.startsWith('nerdmeet_'));
+    if (keysToRemove.length > 0) {
+      await ext.storage.local.remove(keysToRemove);
+    }
+  }
+  try {
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith('nerdmeet:')) {
+        localStorage.removeItem(k);
+      }
+    }
+  } catch (e) {}
+
+  code = null;
+  imported = null;
+  view = null;
+  $('#out').hidden = true;
+  const recRow = $('#recRow');
+  if (recRow) recRow.style.display = 'none';
+  const row = $('#storedRow');
+  if (row) row.style.display = 'none';
+  say('All stored meetings deleted.');
+}
+
+async function pick(rec) {
+  const recRow = $('#recRow');
+  if (recRow) recRow.style.display = 'flex';
+  await loadRecord(rec);
+  swap(render);
+}
+function say(t, err) { const m = $('#msg'); m.textContent = t; m.className = err ? 'err' : ''; }
+
+function applyImport() {
+  const map = {};
+  Object.entries(imported?.participants || {}).forEach(([n, p]) => (map[n.trim().toLowerCase()] = p));
+  view.rows.forEach((r) => (r.beh = map[r.name.trim().toLowerCase()] || null));
+  view.hasBeh = !!imported;
+}
+
+async function readFile(f) {
+  try { imported = JSON.parse(await f.text()); if (!imported.participants) throw 0; }
+  catch { return say('That file is not NerdMeet tracker JSON.', true); }
+  say('Tracker data imported.');
+  if (view) { applyImport(); swap(render); }
+  else { loadFromTrackerData(imported); }
+}
+
+const beh = (k) => (r) => (r.beh && r.beh[k] !== undefined ? r.beh[k] : '-');
+const COLS = [
+  { id: 'joined', label: 'Joined', get: (r) => clock(r.first) },
+  { id: 'left', label: 'Left', get: (r) => clock(r.last) },
+  { id: 'stay', label: 'Stay Time', get: (r) => dur(r.total) },
+  { id: 'talk', label: 'Talk Time', get: (r) => r.beh?.talkTimeMs ? dur(r.beh.talkTimeMs) : '-' },
+  { id: 'camTime', label: 'Cam Time', get: (r) => r.beh?.cameraTimeMs ? dur(r.beh.cameraTimeMs) : '-' },
+  { id: 'rejoins', label: 'Rejoins', get: (r) => r.rejoins },
+  { id: 'hands', label: 'Hands', get: beh('handRaises') },
+  { id: 'mic', label: 'Mic', get: beh('micOpens') },
+  { id: 'cam', label: 'Camera', get: beh('cameraOpens') },
+  { id: 'chat', label: 'Chat', get: beh('chatMessages') },
+];
+
+function countUp(el) {
+  const n = +el.dataset.n, f = el.dataset.f === 'dur' ? dur : String;
+  if (reduced) return (el.textContent = f(n));
+  const t0 = performance.now();
+  (function tick(t) {
+    const k = Math.min(1, (t - t0) / 700);
+    el.textContent = f(Math.round(n * (1 - (1 - k) ** 3)));
+    if (k < 1) requestAnimationFrame(tick);
+  })(t0);
+}
+
+function timeline() {
+  const W = 720, H = 84, { pts, peak, t0, t1 } = view, span = Math.max(1, t1 - t0);
+  const X = (t) => ((t - t0) / span * W).toFixed(1), Y = (c) => (H - 6 - c / Math.max(1, peak) * (H - 16)).toFixed(1);
+  let d = `M0,${Y(pts[0]?.[1] || 0)}`, last = pts[0]?.[1] || 0;
+  pts.forEach(([t, c]) => { d += `L${X(t)},${Y(last)}L${X(t)},${Y(c)}`; last = c; });
+  return `<svg viewBox="0 0 ${W} ${H + 18}" role="img" aria-label="Participants over time, peak ${peak}">
+    <path d="${d}L${W},${H}L0,${H}Z" fill="var(--accent)" opacity=".14"/>
+    <path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2"/>
+    <text x="0" y="${H + 14}" font-size="11" fill="var(--muted)">${clock(t0)}</text>
+    <text x="${W}" y="${H + 14}" font-size="11" text-anchor="end" fill="var(--muted)">${clock(t1)}</text></svg>`;
+}
+
+function render() {
+  $('#skel').hidden = true; $('#out').hidden = false;
+  const { rows, avg, peak } = view;
+  const hands = view.hasBeh ? rows.reduce((a, r) => a + (r.beh?.handRaises || 0), 0) : null;
+  const totalTalk = view.hasBeh ? rows.reduce((a, r) => a + (r.beh?.talkTimeMs || 0), 0) : null;
+  
+  const stats = [
+    ['Joined', rows.length, 'int'],
+    ['Avg stay', avg, 'dur'],
+    ['Peak at once', peak, 'int'],
+    ['Total Talk Time', totalTalk, 'dur']
+  ];
+  $('#cards').innerHTML = stats.map(([l, v, f], i) =>
+    `<div class="card in" style="--i:${i}"><b data-n="${v}" data-f="${f}">${v === null ? '-' : ''}</b><span>${l}</span></div>`).join('');
+  document.querySelectorAll('#cards b').forEach((b) => b.dataset.n !== 'null' && countUp(b));
+  $('#tl').innerHTML = timeline();
+
+  const maxStay = Math.max(1, ...rows.map((r) => r.total));
+  const maxTalk = Math.max(1, ...rows.map((r) => r.beh?.talkTimeMs || 0));
+
+  $('#tbl').innerHTML = `<tr><th>Name</th>${COLS.map((c) => `<th>${c.label}</th>`).join('')}</tr>` +
+    rows.sort((a, b) => (b.beh?.talkTimeMs || 0) - (a.beh?.talkTimeMs || 0) || a.first - b.first).map((r, i) => {
+      const displayName = getDisplayName(r.name);
+      return `<tr class="in" style="--i:${Math.min(i, 12) + 6}"><td><b>${esc(displayName)}</b></td>` +
+        COLS.map((c) => {
+          if (c.id === 'stay') {
+            return `<td>${c.get(r)}<span class="track"><i style="--w:${(r.total / maxStay).toFixed(3)}"></i></span></td>`;
+          }
+          if (c.id === 'talk' && r.beh?.talkTimeMs) {
+            return `<td>${c.get(r)}<span class="track"><i style="--w:${(r.beh.talkTimeMs / maxTalk).toFixed(3)}"></i></span></td>`;
+          }
+          return `<td>${c.get(r)}</td>`;
+        }).join('') + '</tr>';
+    }).join('');
+  $('#behHint').hidden = view.hasBeh;
+}
+
+function exportPDF() {
+  const on = new Set([...document.querySelectorAll('#chips input:checked')].map((i) => i.value));
+  const doc = new window.jspdf.jsPDF(); 
+  doc.setFontSize(20); doc.text('NerdMeet Analytics Report', 14, 20);
+  doc.setFontSize(10); doc.setTextColor(110);
+  doc.text(`Meeting: ${code} | Date: ${new Date(view.rec.startTime).toLocaleDateString()}`, 14, 27);
+  let y = 36;
+  if (on.has('summary')) {
+    doc.setTextColor(30);
+    const totalTalk = view.hasBeh ? rows => rows.reduce((a, r) => a + (r.beh?.talkTimeMs || 0), 0) : () => 0;
+    [`Total Participants: ${view.rows.length}`, `Average Stay: ${dur(view.avg)}`, `Peak Concurrent: ${view.peak}`,
+     `Total Talk Time: ${dur(totalTalk(view.rows))}`,
+     `Hand Raises: ${view.hasBeh ? view.rows.reduce((a, r) => a + (r.beh?.handRaises || 0), 0) : '-'}`]
+      .forEach((t) => { doc.text(t, 14, y); y += 6; });
+    y += 4;
+  }
+  const cols = COLS.filter((c) => on.has(c.id));
+  doc.autoTable({
+    startY: y,
+    head: [['Name', ...cols.map((c) => c.label)]],
+    body: view.rows.map((r) => [getDisplayName(r.name), ...cols.map((c) => c.get(r))]),
+    styles: { fontSize: 8 },
+    headStyles: { fillColor: [229, 165, 10], textColor: [31, 30, 29] }
+  });
+  doc.save(`nerdmeet-${code || 'export'}.pdf`);
+}
+
+function exportCSV() {
+  if (!view || !view.rows) return say('No meeting data to export.', true);
+  const on = new Set([...document.querySelectorAll('#chips input:checked')].map((i) => i.value));
+  const cols = COLS.filter((c) => on.has(c.id));
+  const header = ['Name', ...cols.map((c) => c.label)];
+  const rows = [
+    header,
+    ...view.rows.map((r) => [
+      `"${getDisplayName(r.name).replace(/"/g, '""')}"`,
+      ...cols.map((c) => `"${String(c.get(r)).replace(/"/g, '""')}"`)
+    ])
+  ];
+  const csvContent = rows.map((r) => r.join(',')).join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `nerdmeet-${code || 'export'}-report.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+$('#chips').innerHTML = [{ id: 'summary', label: 'Summary' }, ...COLS].map((c) =>
+  `<label class="chip"><input type="checkbox" value="${c.id}" checked><span>${c.label}</span></label>`).join('');
+$('#go').onclick = analyze;
+$('#btnLoadLocal').onclick = async () => {
+  const row = $('#storedRow');
+  if (row.style.display === 'flex') {
+    row.style.display = 'none';
+    return;
+  }
+  await loadStoredMeetingsList();
+  const sel = $('#storedSelect');
+  if (sel.value && sel.value !== '__clear_all__') {
+    const meetData = await getStoredMeet(sel.value);
+    if (meetData) {
+      code = sel.value;
+      $('#code').value = code;
+      say(`Loaded stored meeting: ${code}`);
+      loadFromTrackerData(meetData);
+    }
+  }
+};
+
+$('#storedSelect').onchange = async (e) => {
+  const val = e.target.value;
+  if (!val) return;
+  if (val === '__clear_all__') {
+    const confirmed = confirm('Delete ALL stored meetings from browser history?');
+    if (confirmed) {
+      await deleteAllStoredMeetings();
+    } else {
+      e.target.value = code || '';
+    }
+    return;
+  }
+  const meetData = await getStoredMeet(val);
+  if (meetData) {
+    code = val;
+    $('#code').value = code;
+    say(`Loaded stored meeting: ${code}`);
+    loadFromTrackerData(meetData);
+  }
+};
+
+$('#btnOpenStored').onclick = async () => {
+  const sel = $('#storedSelect');
+  if (!sel.value || sel.value === '__clear_all__') return;
+  const meetData = await getStoredMeet(sel.value);
+  if (meetData) {
+    code = sel.value;
+    $('#code').value = code;
+    say(`Loaded stored meeting: ${code}`);
+    loadFromTrackerData(meetData);
+  }
+};
+
+$('#btnDeleteStored').onclick = async () => {
+  const sel = $('#storedSelect');
+  const target = sel.value;
+  if (!target || target === '__clear_all__') return;
+  const confirmed = confirm(`Delete meeting "${target}" and its stored data?`);
+  if (!confirmed) return;
+  await deleteStoredMeeting(target);
+};
+
+$('#btnDeleteRec').onclick = async () => {
+  const target = code || (imported && imported.meetCode);
+  if (!target) return;
+  const confirmed = confirm(`Delete meeting "${target}" and its stored data?`);
+  if (!confirmed) return;
+  await deleteStoredMeeting(target);
+};
+$('#code').onkeydown = (e) => e.key === 'Enter' && analyze();
+$('#pdf').onclick = exportPDF;
+$('#csv').onclick = exportCSV;
+
+$('#chkAnonymize').onchange = (e) => {
+  anonymize = e.target.checked;
+  if (view) render();
+};
+
+const drop = $('#drop');
+drop.onkeydown = (e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), $('#file').click());
+$('#file').onchange = (e) => e.target.files[0] && readFile(e.target.files[0]);
+drop.ondragover = (e) => { e.preventDefault(); drop.classList.add('over'); };
+drop.ondragleave = () => drop.classList.remove('over');
+drop.ondrop = (e) => { e.preventDefault(); drop.classList.remove('over'); e.dataTransfer.files[0] && readFile(e.dataTransfer.files[0]); };
+
+const urlParams = new URLSearchParams(location.search);
+const queryCode = urlParams.get('code');
+if (queryCode) {
+  $('#code').value = queryCode;
+  setTimeout(analyze, 300);
+}
+</script>
+</body>
+</html>

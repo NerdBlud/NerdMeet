@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NerdMeet Side Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg: #151413;
+  --fg: #FAF9F5;
+  --muted: #9E9B93;
+  --line: #2B2A27;
+  --card: #1E1D1B;
+  --card-hover: #262522;
+  --accent: #F59E0B;
+  --accent-light: rgba(245, 158, 11, 0.12);
+  --accent-border: rgba(245, 158, 11, 0.3);
+  --accent-ink: #151413;
+  --err: #EF4444;
+  --success: #10B981;
+  --font: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #F8F7F4;
+    --fg: #1E1D1B;
+    --muted: #6B6861;
+    --line: #E5E2DA;
+    --card: #FFFFFF;
+    --card-hover: #F2EFE9;
+    --accent: #D97706;
+    --accent-light: rgba(217, 119, 6, 0.1);
+    --accent-border: rgba(217, 119, 6, 0.3);
+    --accent-ink: #FFFFFF;
+    --err: #DC2626;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font) !important;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font: 13px/1.5 var(--font);
+  padding: 14px;
+  overflow-x: hidden;
+  letter-spacing: -0.1px;
+}
+
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+  transition: border-color 0.25s var(--ease);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.4px;
+  color: var(--accent);
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+  transition: transform 0.25s var(--ease);
+}
+.brand:hover .dot {
+  transform: scale(1.35);
+}
+.pill {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.25s var(--ease);
+}
+.selector-row {
+  display: flex;
+  gap: 7px;
+  margin-bottom: 10px;
+}
+select, input[type=text] {
+  flex: 1;
+  min-width: 0;
+  color: inherit;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 7px 11px;
+  font-size: 12px;
+  font-weight: 500;
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+select:focus, input[type=text]:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-border);
+}
+
+.btn {
+  font-weight: 600;
+  font-size: 12px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--fg);
+  border-radius: 9px;
+  padding: 8px 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: transform 0.18s var(--ease), background 0.18s var(--ease), border-color 0.18s var(--ease), box-shadow 0.18s var(--ease);
+  white-space: nowrap;
+}
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border-color: var(--accent);
+}
+.btn:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.btn.primary {
+  background: #F59E0B;
+  border-color: #F59E0B;
+  color: #151413;
+  font-weight: 600;
+  box-shadow: 0 3px 12px rgba(245, 158, 11, 0.25);
+}
+.btn.primary:hover {
+  background: #fbbf24;
+  border-color: #fbbf24;
+  box-shadow: 0 5px 16px rgba(245, 158, 11, 0.35);
+}
+.btn svg {
+  flex-shrink: 0;
+}
+.btn.danger {
+  color: #E8846C;
+  border-color: rgba(232, 132, 108, 0.25);
+}
+.btn.danger:hover {
+  background: rgba(232, 132, 108, 0.12);
+  border-color: #E8846C;
+  box-shadow: 0 4px 12px rgba(232, 132, 108, 0.2);
+}
+.btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 12px;
+  padding: 6px 10px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  transition: border-color 0.2s var(--ease);
+}
+.toggle-row:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin-bottom: 13px;
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  transition: transform 0.22s var(--ease), border-color 0.22s var(--ease), box-shadow 0.22s var(--ease);
+}
+.card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-border);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+}
+.card b {
+  display: block;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.2;
+  letter-spacing: -0.6px;
+  color: var(--fg);
+  margin-bottom: 2px;
+}
+.card span {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.card .card-sub {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-light);
+  border: 1px solid var(--accent-border);
+  border-radius: 6px;
+  padding: 2px 7px;
+  margin-top: 6px;
+  letter-spacing: 0.2px;
+}
+
+.panel {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  transition: border-color 0.2s var(--ease);
+}
+.panel:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+.panel-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.panel-title > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.queue-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  background: var(--bg);
+  border-left: 3px solid var(--accent);
+  border-radius: 7px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  animation: slideIn 0.25s var(--ease) both;
+  transition: transform 0.18s var(--ease), background 0.18s var(--ease);
+}
+.queue-item:hover {
+  transform: translateX(2px);
+  background: var(--card-hover);
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.queue-order {
+  font-weight: 700;
+  color: var(--accent);
+  margin-right: 6px;
+}
+
+.scroll-table {
+  overflow-x: auto;
+  max-height: 280px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+th {
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--muted);
+  padding: 8px 8px 8px 0;
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  background: var(--card);
+}
+th span.th-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+td {
+  padding: 9px 8px 9px 0;
+  font-size: 11.5px;
+  font-weight: 400;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.15s var(--ease);
+}
+tbody tr:hover td {
+  background: rgba(245, 158, 11, 0.05);
+}
+
+.bar-track {
+  width: 48px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 6px;
+}
+.bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #E5A50A, #F59E0B);
+  border-radius: 999px;
+  transition: width 0.4s var(--ease);
+}
+.sub-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-light);
+  border: 1px solid var(--accent-border);
+  border-radius: 5px;
+  padding: 1px 5px;
+  margin-left: 4px;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin-bottom: 8px;
+}
+.empty-msg {
+  text-align: center;
+  padding: 22px 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  z-index: 10000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s var(--ease);
+}
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal-content {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 360px;
+  padding: 18px;
+  box-shadow: 0 24px 48px rgba(0,0,0,0.5);
+  transform: scale(0.93) translateY(12px);
+  transition: transform 0.25s var(--ease);
+}
+.modal-overlay.open .modal-content {
+  transform: scale(1) translateY(0);
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+.modal-title {
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--accent);
+}
+.preset-bar {
+  display: flex;
+  gap: 5px;
+  margin: 8px 0 12px;
+  flex-wrap: wrap;
+}
+.preset-btn {
+  font-size: 10.5px;
+  font-weight: 500;
+  padding: 4px 9px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s var(--ease);
+}
+.preset-btn:hover {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+.chip-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin: 8px 0 14px;
+}
+.chip-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 7px 9px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  cursor: pointer;
+  transition: border-color 0.18s var(--ease), background 0.18s var(--ease);
+  user-select: none;
+}
+.chip-label:hover {
+  border-color: var(--accent);
+}
+.chip-label input {
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+.modal-actions .btn {
+  flex: 1;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="dot"></span>
+    <span>NerdMeet</span>
+  </div>
+</header>
+
+<div class="selector-row">
+  <select id="meetingSelect" aria-label="Select meeting session">
+    <option value="">Select tracked meeting...</option>
+  </select>
+  <button id="btnRefresh" class="btn" title="Refresh meetings list">
+    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+  </button>
+  <button id="btnDeleteMeeting" class="btn danger" title="Delete selected meeting" disabled>
+    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+  </button>
+</div>
+
+<div class="toggle-row">
+  <label style="display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+    <span>Privacy mode (anonymize names)</span>
+  </label>
+  <input type="checkbox" id="chkAnonymize" style="accent-color:var(--accent);width:15px;height:15px;cursor:pointer;">
+</div>
+
+<div class="cards" id="kpiCards">
+  <div class="card">
+    <b id="kpiJoined">-</b>
+    <span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Participants
+    </span>
+  </div>
+  <div class="card">
+    <b id="kpiTalkTime">-</b>
+    <span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+      Talk Time
+    </span>
+    <div id="kpiMicOpens" class="card-sub">0 mic opens</div>
+  </div>
+  <div class="card">
+    <b id="kpiHands">-</b>
+    <span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>
+      Hand Raises
+    </span>
+    <div id="kpiChatMsgs" class="card-sub">0 messages</div>
+  </div>
+  <div class="card">
+    <b id="kpiActive">-</b>
+    <span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>
+      Active Now
+    </span>
+    <div id="kpiCamOpens" class="card-sub">0 cam opens</div>
+  </div>
+</div>
+
+<div class="panel" id="panelQueue">
+  <div class="panel-title">
+    <span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>
+      Raised Hands Queue (FIFO)
+    </span>
+    <span id="queueCount" class="pill">0</span>
+  </div>
+  <div id="queueList">
+    <div class="empty-msg">No active hand raises.</div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">
+    <span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Live Attendees & Participation
+    </span>
+    <input type="text" id="filterInput" placeholder="Filter names..." style="max-width:110px;padding:3px 7px;font-size:11px;">
+  </div>
+  <div class="scroll-table">
+    <table id="attendeesTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>
+            <span class="th-inner" title="Talk time and mic open count">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+              Talk
+            </span>
+          </th>
+          <th>
+            <span class="th-inner" title="Total stay duration">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Stay
+            </span>
+          </th>
+          <th>
+            <span class="th-inner" title="Camera duration and video toggles">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>
+              Cam
+            </span>
+          </th>
+          <th>
+            <span class="th-inner" title="Hand raises">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>
+            </span>
+          </th>
+          <th>
+            <span class="th-inner" title="Chat messages">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </span>
+          </th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <tr><td colspan="6" class="empty-msg">Waiting for meeting activity...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<button id="btnOpenPdfModal" class="btn primary" style="width:100%;margin-bottom:8px;padding:10px 14px;font-size:13px;">
+  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+  Export PDF...
+</button>
+
+<div class="actions">
+  <button id="btnExportCSV" class="btn">
+    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>
+    Export CSV
+  </button>
+  <button id="btnExportJSON" class="btn">
+    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+    Export JSON
+  </button>
+</div>
+
+
+<div id="exportModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>
+        Customize PDF Report
+      </div>
+      <button id="btnCloseModal" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+
+    <div style="font-size:11.5px;color:var(--muted);margin-bottom:6px;font-weight:500;">Select metrics to include:</div>
+    <div class="preset-bar">
+      <button class="preset-btn" data-preset="all">Select All</button>
+      <button class="preset-btn" data-preset="attendance">Attendance Only</button>
+      <button class="preset-btn" data-preset="speech">Talk & Hands</button>
+      <button class="preset-btn" data-preset="minimal">Minimal</button>
+    </div>
+
+    <div class="chip-grid">
+      <label class="chip-label">
+        <input type="checkbox" id="colStay" checked>
+        <span>Total Stay</span>
+      </label>
+      <label class="chip-label">
+        <input type="checkbox" id="colTalk" checked>
+        <span>Talk Time</span>
+      </label>
+      <label class="chip-label">
+        <input type="checkbox" id="colMicOpens" checked>
+        <span>Mic Opens</span>
+      </label>
+      <label class="chip-label">
+        <input type="checkbox" id="colCam" checked>
+        <span>Camera Time</span>
+      </label>
+      <label class="chip-label">
+        <input type="checkbox" id="colCamOpens" checked>
+        <span>Camera Opens</span>
+      </label>
+      <label class="chip-label">
+        <input type="checkbox" id="colHands" checked>
+        <span>Hand Raises</span>
+      </label>
+      <label class="chip-label">
+        <input type="checkbox" id="colChat" checked>
+        <span>Chat Messages</span>
+      </label>
+      <label class="chip-label">
+        <input type="checkbox" id="colRejoins" checked>
+        <span>Rejoins</span>
+      </label>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:500;margin-bottom:8px;">
+      <input type="checkbox" id="incKpiHeader" checked style="accent-color:var(--accent);cursor:pointer;width:14px;height:14px;">
+      <label for="incKpiHeader" style="cursor:pointer;">Include summary KPIs header</label>
+    </div>
+
+    <div class="modal-actions">
+      <button id="btnCancelPdf" class="btn">Cancel</button>
+      <button id="btnGeneratePdf" class="btn primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+        Generate PDF
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="lib/jspdf.umd.min.js"></script>
+<script src="lib/jspdf.plugin.autotable.min.js"></script>
+<script src="sidepanel.js"></script>
+</body>
+</html>
